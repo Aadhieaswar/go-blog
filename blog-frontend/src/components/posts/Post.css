@@ -1,0 +1,22 @@
+.post-form {
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.post-form input {
+    width: 40%;
+    margin: 10px auto;
+    align-items: center;
+}
+
+.post-form textarea {
+    width: 75%;
+    margin: 10px auto;
+    align-items: center;
+}
+
+.post-form button {
+    width: 20%;
+    margin: 12px auto;
+}
