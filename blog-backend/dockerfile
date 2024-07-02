@@ -1,0 +1,18 @@
+From golang:1.22-alpine
+
+# install required dependencies
+RUN apk add --no-cache gcc musl-dev
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
+RUN go env -w CGO_ENABLED=1
+
+COPY . .
+
+RUN go build -o main .
+
+EXPOSE 8080
+
+ENTRYPOINT ["./main"]
