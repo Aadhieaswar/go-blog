@@ -1,0 +1,12 @@
+.nav-title:hover {
+    cursor: pointer;
+}
+
+.username-span {
+    margin-right: 10%;
+    text-decoration: none;
+}
+
+.username-span:hover {
+    cursor: pointer;
+}

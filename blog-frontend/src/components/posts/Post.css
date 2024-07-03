@@ -20,3 +20,30 @@
     width: 20%;
     margin: 12px auto;
 }
+
+#posts-container {
+    width: 80%;
+    margin: 10px auto;
+}
+
+#posts-container ul li:hover {
+    filter: brightness(85%);
+    transition-duration: 0.5s;
+    cursor: pointer;
+}
+
+.no-posts-info {
+    padding: 10px;
+    margin-top: 5%;
+}
+
+.post-container {
+    width: 60%;
+    margin: 0 auto;
+    text-align: left;
+    margin-top: 5%;
+}
+
+.user-profile-link:hover {
+    cursor: pointer;
+}

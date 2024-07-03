@@ -3,6 +3,7 @@ import "./Post.css";
 import { GetAllPosts } from 'api/Posts';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from 'context/AuthContext';
+import Urls from 'context/Urls';
 
 const PostList = () => {
     const [posts, setPosts] = useState([]);
@@ -15,7 +16,6 @@ const PostList = () => {
             .then(response => {
                 if (!response.error) {
                     setPosts(response); 
-                    console.log(response);
                 }
                 // handle error
             })
@@ -31,13 +31,15 @@ const PostList = () => {
                         <li
                             key={post.ID}
                             className='list-group-item'
+                            onClick={() => navigate(Urls.GetPost.replace(":slug", post.slug))}
                             >
-                            <div className='fw-bold text-capitalize h5'>{post.Title}</div>
-                            <div className='text-end text-capitalized fst-italic'>{post.Author.Username}</div>
-                            <div className='text-start fst-normal'>{post.Content}</div>
+                            <input type='hidden' value={post.slug} />
+                            <div className='fw-bold text-capitalize h5'>{post.title}</div>
+                            <div className='text-end text-capitalized fst-italic'>{post.author.username}</div>
+                            <div className='text-start fst-normal'>{post.content}</div>
                         </li>
                     ))) : (
-                    <div className="card">
+                    <div className="no-posts-info card border-warning text-warning">
                         No Posts Published at the Moment...
                     </div>
                 )}
@@ -45,7 +47,7 @@ const PostList = () => {
             {token ? 
             <button 
                 className='btn btn-primary text-uppercase'
-                onClick={() => navigate("/create-post")}
+                onClick={() => navigate(Urls.CreatePost)}
                 >
                 Create New Post
             </button> : null}

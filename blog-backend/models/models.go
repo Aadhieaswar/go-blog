@@ -16,6 +16,7 @@ type Post struct {
 	gorm.Model
 	Title    string
 	Content  string
+	Slug     string `gorm:"uniqueIndex"`
 	AuthorID uint
 	Author   Author
 }

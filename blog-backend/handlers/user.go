@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"blog-backend/handlers/dto"
 	"blog-backend/handlers/utils"
 	"blog-backend/models"
 	"net/http"
@@ -21,8 +22,17 @@ func RegisterUserRoute(router *gin.Engine, db *gorm.DB) {
 		HandleLoginUser(c, db)
 	})
 
-	router.GET("/api/user/:id", func(c *gin.Context) {
-		HandleGetUserById(c, db)
+	router.GET("/api/user-info",
+		func(c *gin.Context) {
+			utils.VerifyToken(c, db)
+		},
+		func(c *gin.Context) {
+			HandleGetUserInfo(c, db)
+		},
+	)
+
+	router.GET("/api/basic-user-info", func(c *gin.Context) {
+		HandleGetBasicUserInfo(c, db)
 	})
 }
 
@@ -111,20 +121,61 @@ func HandleLoginUser(c *gin.Context, db *gorm.DB) {
 	})
 }
 
-func HandleGetUserById(c *gin.Context, db *gorm.DB) {
+func HandleGetUserInfo(c *gin.Context, db *gorm.DB) {
 	var user models.Author
 
-	var user_id = c.Param("id")
+	user_id := c.DefaultQuery("id", "")
 
-	if err := db.First(&user, user_id).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Unable to find the user with the given ID: " + user_id,
+	if user_id == "" {
+		user = c.MustGet("user").(models.Author)
+
+		c.JSON(http.StatusOK, dto.UserResponse{
+			Username: user.Username,
+			ID:       user.ID,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"User":      user.Username,
-		"CreatedAt": user.CreatedAt,
+	if err := db.First(&user, user_id).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": utils.Error{
+				Message: "Unable to find the user with the given ID: " + user_id,
+				Code:    "G-999",
+			},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, dto.UserResponse{
+		Username: user.Username,
+		ID:       user.ID,
+	})
+}
+
+func HandleGetBasicUserInfo(c *gin.Context, db *gorm.DB) {
+	var user models.Author
+
+	user_id := c.DefaultQuery("id", "")
+
+	if user_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": utils.RequestInvalid,
+		})
+		return
+	}
+
+	if err := db.First(&user, user_id).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": utils.Error{
+				Message: "Unable to find the user with the given ID: " + user_id,
+				Code:    "G-999",
+			},
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, dto.UserBasicResponse{
+		Username: user.Username,
+		ID:       user.ID,
 	})
 }

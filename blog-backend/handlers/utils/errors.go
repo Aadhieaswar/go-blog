@@ -41,6 +41,14 @@ var DBAuthorNotFound = Error{
 	Message: "User not found",
 	Code:    "DB-104",
 }
+var DBPostNotFound = Error{
+	Message: "Post not found",
+	Code:    "DB-105",
+}
+var DBGetPostFailure = Error{
+	Message: "Failed to retrieve post",
+	Code:    "DB-106",
+}
 
 // Token failure
 var TokenGenerationFailure = Error{

@@ -3,6 +3,8 @@ import './Post.css';
 import { AuthContext } from "context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { CreatePost } from "api/Posts";
+import Urls from "context/Urls";
+import { nanoid } from "nanoid";
 
 const CreatePostForm = () => {
     const [title, setTitle] = useState("");
@@ -16,9 +18,16 @@ const CreatePostForm = () => {
         // redirect user if they are not logged in
         if (!token) {
             alert("You need to be logged into create a post!");
-            navigate("/");
+            navigate(Urls.Home);
         }
-    });
+    }, []);
+
+    const slugify = (title) => {
+        return title
+            .toLowerCase()
+            .replace(/ /g, "-")
+            .replace(/[^\w-]+/g, "");
+    }
 
     const submitPost = (e) => {
         e.preventDefault();
@@ -28,10 +37,13 @@ const CreatePostForm = () => {
             return;
         }
 
-        CreatePost({ title, content, token })
+        const slug = `${slugify(title)}-${nanoid(10)}`;
+        console.log(slug);
+
+        CreatePost({ title, content, token, slug })
             .then(response => {
                 if (!response.error) {
-                    navigate("/");
+                    navigate(Urls.Home);
                 }
 
                 // handle error message

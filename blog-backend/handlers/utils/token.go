@@ -1,11 +1,12 @@
 package utils
 
 import (
-	"fmt"
+	"blog-backend/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
+	"gorm.io/gorm"
 )
 
 var jwt_key = []byte("my_secret_key")
@@ -24,7 +25,7 @@ func GetJwtKey() []byte {
 	return jwt_key
 }
 
-func VerifyToken(c *gin.Context) {
+func VerifyToken(c *gin.Context, db *gorm.DB) {
 	tokenString := c.GetHeader("Authorization")
 
 	if tokenString == "" {
@@ -44,9 +45,6 @@ func VerifyToken(c *gin.Context) {
 
 	if err != nil || !token.Valid {
 
-		fmt.Println(token)
-		fmt.Println(claims)
-
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": TokenInvalid,
 		})
@@ -54,6 +52,15 @@ func VerifyToken(c *gin.Context) {
 		return
 	}
 
-	c.Set("username", claims.Username)
+	var user models.Author
+	if err := db.Where("username = ?", claims.Username).First(&user).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": DBAuthorNotFound,
+		})
+		c.Abort()
+		return
+	}
+
+	c.Set("user", user)
 	c.Next()
 }

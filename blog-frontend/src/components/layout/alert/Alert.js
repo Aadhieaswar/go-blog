@@ -1,10 +1,11 @@
 import React from "react";
+import './Alert.css';
 
-const Alert = ({ message, level }) => {
+const Alert = ({ message, level, onClose }) => {
+
     return (
-        <div className={`toast text-white bg-${level} border-0`} role="alert">
-            <div className="toast-body">{ message }</div>
-            <button type="button" className="btn-close" data-bs-dismiss="toast"></button>
+        <div className={`alert-card card border-${level ?? 'primary'}`}>
+            <p className={`card-text text-${level ?? 'primary'}`}>{message}</p>
         </div>
     );
 }
