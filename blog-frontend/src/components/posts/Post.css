@@ -22,14 +22,33 @@
 }
 
 #posts-container {
-    width: 80%;
-    margin: 10px auto;
+    width: 95%;
+    margin: 0 auto;
+    margin-top: 10px;
 }
 
-#posts-container ul li:hover {
+#posts-container ul {
+    list-style-type: none;
+}
+
+#posts-container > button {
+    margin: 10px;
+}
+
+.post-list {
+    display: inline-flex;
+}
+
+.post-list li {
+    width: 30%;
+    min-width: 350px;
+    min-height: 100px;
+    margin: 1%;
+    overflow-y: hidden;
+}
+
+.post-list button:hover {
     filter: brightness(85%);
-    transition-duration: 0.5s;
-    cursor: pointer;
 }
 
 .no-posts-info {
@@ -37,7 +56,7 @@
     margin-top: 5%;
 }
 
-.post-container {
+.post-details-container {
     width: 60%;
     margin: 0 auto;
     text-align: left;

@@ -2,6 +2,17 @@
     cursor: pointer;
 }
 
+.navbar {
+    border-bottom: 5px solid var(--bs-blue);
+}
+
+.wave-bg {
+    width: 100vw;
+    height: auto;
+    position: absolute;
+    z-index: 1000;
+}
+
 .username-span {
     margin-right: 10%;
     text-decoration: none;

@@ -27,7 +27,7 @@ const PostDisplay = () => {
     }, [slug]);
 
     return (
-        <div className="post-container">
+        <div className="post-details-container">
         {postInfo ? (
             <div className="card border-dark">
                 <h4 className="card-header text-capitalize bg-dark text-white">
