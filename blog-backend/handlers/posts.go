@@ -4,7 +4,6 @@ import (
 	"blog-backend/handlers/dto"
 	"blog-backend/handlers/utils"
 	"blog-backend/models"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -46,7 +45,6 @@ func HandleGetAllPosts(c *gin.Context, db *gorm.DB) {
 
 	var response []dto.PostResponse
 	for _, post := range posts {
-		fmt.Println(post.Slug)
 		response = append(response, dto.MapToPostResponse(post))
 	}
 
