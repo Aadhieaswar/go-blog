@@ -15,7 +15,8 @@ const AlertManager: React.FC = () => {
                     className="alert-card"
                     >
                     {alert.message}
-                </Alert>)
+                </Alert>
+                )
             )}
         </div>
     );

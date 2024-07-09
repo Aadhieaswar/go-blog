@@ -1,0 +1,1 @@
+export const DefaultImagePath = '/images/default-post.png';

@@ -1,10 +1,10 @@
 import { RouteObject } from "react-router-dom";
-import LoginForm from "../components/user/LoginForm";
-import PostList from "../components/posts/PostList";
-import CreatePostForm from "../components/posts/CreatePostForm";
-import RegisterForm from "../components/user/RegisterForm";
-import PostDisplay from "../components/posts/PostDisplay";
-import UserProfile from "../components/profile/UserProfile";
+import LoginForm from "@components/user/LoginForm";
+import PostList from "@components/posts/PostList";
+import CreatePostForm from "@components/posts/CreatePostForm";
+import RegisterForm from "@components/user/RegisterForm";
+import PostDisplay from "@components/posts/PostDisplay";
+import UserProfile from "@components/profile/UserProfile";
 
 interface AppRoutes {
 	[key: string]: RouteObject;

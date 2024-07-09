@@ -6,6 +6,7 @@ import { GetPostBySlug } from "@api/Posts";
 import { PostParams, ErrorResponse } from "@api/Utils";
 import { useAlerts } from "@context/AlertContext";
 import routes from "@routes/Routes";
+import { DefaultImagePath } from "@utils/Image";
 
 const PostDisplay: React.FC = () => {
     const [postInfo, setPostInfo] = useState<PostParams>({
@@ -17,6 +18,7 @@ const PostDisplay: React.FC = () => {
             username: "username_placeholder",
             id: NaN
         },
+        image: DefaultImagePath
     });
 
     const navigate = useNavigate()
@@ -25,7 +27,7 @@ const PostDisplay: React.FC = () => {
     const { slug } = useParams();
 
     useEffect(() => {
-        GetPostBySlug(slug)
+        GetPostBySlug(slug as string)
             .then((response: ErrorResponse | PostParams) => {
                 if ("error" in response) {
                     addAlert(response.error.message, "danger");
@@ -45,7 +47,7 @@ const PostDisplay: React.FC = () => {
                 <Card.Body>
                     <Card.Title
                         className="user-profile-link text-capitalize"
-                        onClick={() => navigate(routes.UserProfile.path.replace(":id", postInfo.author.id))}
+                        onClick={() => navigate((routes.UserProfile.path as string).replace(":id", String(postInfo.author.id)))}
                         >
                         By <strong>{postInfo.author.username}</strong>
                     </Card.Title>

@@ -1,8 +1,10 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
 
+export type ColorLevel = 'danger' | 'warning' | 'success' | 'info' | 'primary';
+
 export type Alert = {
     message: string;
-    level: string;
+    level: ColorLevel;
 };
 
 export type AlertState = {
@@ -12,7 +14,7 @@ export type AlertState = {
 
 interface AlertContextType {
     alerts: AlertState[],
-    addAlert: (message: string, level: string, duration?: number) => void;
+    addAlert: (message: string, level: ColorLevel, duration?: number) => void;
     removeAlert: (id: number) => void;
 };
 
@@ -21,7 +23,7 @@ const AlertContext = createContext<AlertContextType | undefined>(undefined);
 export const AlertProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [alerts, setAlerts] = useState<AlertState[]>([]);
 
-    const addAlert = (message: string, level: string, duration = 3000) => {
+    const addAlert = (message: string, level: ColorLevel, duration = 3000) => {
         const newAlert: AlertState = {
             alert: { message, level },
             id: Date.now(),

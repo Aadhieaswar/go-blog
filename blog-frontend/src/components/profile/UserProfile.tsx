@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Card } from "react-bootstrap";
 import "./Profile.css";
 import { GetBasicUserInfo, GetUserInfo } from "@api/User";
 import { ErrorResponse, UserInfo } from "@api/Utils";
 import { useAuth } from "@context/AuthContext";
 import { useAlerts } from "@context/AlertContext";
-import { Card } from "react-bootstrap";
 
 const UserProfile: React.FC = () => {
     const [userInfo, setUserInfo] = useState<UserInfo>();
@@ -16,7 +16,7 @@ const UserProfile: React.FC = () => {
 
     useEffect(() => {
         if (token !== null) {
-            GetUserInfo(token, id === "me" ? "" : Number(id))
+            GetUserInfo(token, id === "me" ? "" : String(id))
                 .then((response: ErrorResponse | UserInfo) => {
                     if ("error" in response) {
                         addAlert(response.error.message, "danger");

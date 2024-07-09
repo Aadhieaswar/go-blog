@@ -32,7 +32,7 @@ const NavBar: React.FC = () => {
         logout();
 
         addAlert("Successfully logged out user!", "success");
-        navigate(routes.Home.path);
+        navigate(routes.Home.path as string);
     }
 
     return (
@@ -45,8 +45,8 @@ const NavBar: React.FC = () => {
                 { token ? (
                     <>
                         <Nav.Link
-                            className="username-span navbar-text text-capitalize text-light"
-                            href={routes.UserProfile.path.replace(":id", "me")}
+                            className="username-span text-capitalize text-white"
+                            href={(routes.UserProfile.path as string).replace(":id", "me")}
                             >
                             {username}
                         </Nav.Link>
@@ -63,14 +63,14 @@ const NavBar: React.FC = () => {
                         <Button 
                             className="me-2"
                             variant="outline-light"
-                            onClick={() => navigate(routes.RegisterUser.path)}
+                            onClick={() => navigate(routes.RegisterUser.path as string)}
                             >
                             Register
                         </Button>
                         <Button
                             className="me-2"
                             variant="outline-light"
-                            onClick={() => navigate(routes.LoginUser.path)}
+                            onClick={() => navigate(routes.LoginUser.path as string)}
                             >
                             Login
                         </Button>

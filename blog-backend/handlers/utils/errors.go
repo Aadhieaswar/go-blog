@@ -1,8 +1,22 @@
 package utils
 
+import (
+	"log"
+
+	"github.com/gin-gonic/gin"
+)
+
 type Error struct {
 	Message string `json:"message"`
 	Code    string `json:"code"`
+}
+
+func HandleError(c *gin.Context, statusCode int, err Error) {
+	log.Printf("Error: %v | Code: %v", err.Message, err.Code)
+
+	c.JSON(statusCode, gin.H{
+		"error": err,
+	})
 }
 
 // General
@@ -12,10 +26,24 @@ var LoginFailed = Error{
 	Code:    "G-101",
 }
 
-// Request Failure
+// Server failure
+var ImageOpenFailed = Error{
+	Message: "Failed to open image",
+	Code:    "S-101",
+}
+var ImageReadFailed = Error{
+	Message: "Failed to read image",
+	Code:    "S-102",
+}
+
+// Request failure
 var RequestInvalid = Error{
 	Message: "Invalid Request",
 	Code:    "R-101",
+}
+var RequestFileInvalid = Error{
+	Message: "Invalid Image Given",
+	Code:    "R-102",
 }
 
 // Hashing failure

@@ -1,2 +1,9 @@
 # database files
 /*.db
+
+# debug files
+.vscode/*
+__debug*
+
+# log files
+**/*.log

@@ -14,12 +14,14 @@ export interface PostParams {
     content: string;
     slug: string;
     author: UserInfo;
+    image: string;
 }
 
 export interface CreatePostParams {
     title: string;
     content: string;
     slug: string;
+    image: File;
 }
 
 export interface ErrorResponse {

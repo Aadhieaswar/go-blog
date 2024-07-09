@@ -4,7 +4,10 @@ import (
 	"blog-backend/handlers/dto"
 	"blog-backend/handlers/utils"
 	"blog-backend/models"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -28,6 +31,10 @@ func RegisterPostsRoute(router *gin.Engine, db *gorm.DB) {
 		HandleGetPost(c, db)
 	})
 
+	router.GET("/api/post/:slug/image", func(c *gin.Context) {
+		HandleGetImageForPost(c, db)
+	})
+
 	// router.GET("/api/clean", func(c *gin.Context) {
 	// 	HandleClean(c, db)
 	// })
@@ -37,9 +44,7 @@ func HandleGetAllPosts(c *gin.Context, db *gorm.DB) {
 	var posts []models.Post
 
 	if err := db.Preload(models.AuthorModel).Find(&posts).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": utils.DBGetAllPostsFailure,
-		})
+		utils.HandleError(c, http.StatusInternalServerError, utils.DBGetAllPostsFailure)
 		return
 	}
 
@@ -54,19 +59,40 @@ func HandleGetAllPosts(c *gin.Context, db *gorm.DB) {
 func HandleCreatePost(c *gin.Context, db *gorm.DB) {
 	var post models.Post
 
+	post.Title = c.PostForm("title")
+	post.Content = c.PostForm("content")
+	post.Slug = c.PostForm("slug")
+
 	user := c.MustGet("user").(models.Author)
 
-	if err := c.ShouldBindJSON(&post); err != nil {
+	post.AuthorID = user.ID
+
+	file, err := c.FormFile("image")
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": utils.Error{
-				Message: err.Error(),
-				Code:    "G-999",
-			},
+			"error": utils.RequestFileInvalid,
 		})
 		return
 	}
 
-	post.AuthorID = user.ID
+	fileContent, err := file.Open()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": utils.ImageOpenFailed,
+		})
+		return
+	}
+	defer fileContent.Close()
+
+	imageData, err := io.ReadAll(fileContent)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": utils.ImageReadFailed,
+		})
+		return
+	}
+
+	post.Image = imageData
 
 	if err := db.Create(&post).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -111,6 +137,35 @@ func HandleGetPost(c *gin.Context, db *gorm.DB) {
 
 // 	c.JSON(http.StatusOK, gin.H{"message": "clean success", "removed_posts": posts})
 // }
+
+func HandleGetImageForPost(c *gin.Context, db *gorm.DB) {
+	var post models.Post
+
+	slug := c.Param("slug")
+
+	if err := db.Where("slug = ?", slug).First(&post).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			utils.HandleError(c, http.StatusNotFound, utils.DBPostNotFound)
+		} else {
+			utils.HandleError(c, http.StatusInternalServerError, utils.DBGetPostFailure)
+		}
+		return
+	}
+
+	if len(post.Image) == 0 {
+		defaultImagePath := filepath.Join("static", "default-post.png")
+		defaultImage, err := os.ReadFile(defaultImagePath)
+
+		if err != nil {
+			utils.HandleError(c, http.StatusInternalServerError, utils.ImageReadFailed)
+			return
+		}
+
+		c.Data(http.StatusOK, "image/jpeg", defaultImage)
+	}
+
+	c.Data(http.StatusOK, "image/jpeg", post.Image)
+}
 
 func HandleGetPostsByAuthor(c *gin.Context, db *gorm.DB) {
 	var posts []models.Post

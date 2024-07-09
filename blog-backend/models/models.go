@@ -17,6 +17,7 @@ type Post struct {
 	Title    string
 	Content  string
 	Slug     string `gorm:"uniqueIndex"`
+	Image    []byte `gorm:"type:blob"`
 	AuthorID uint
 	Author   Author
 }

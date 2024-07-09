@@ -23,5 +23,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "extends": "./tsconfig.json",
+  "exclude": ["node_modules", "dist"]
 }

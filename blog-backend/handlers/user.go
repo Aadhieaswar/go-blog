@@ -76,25 +76,19 @@ func HandleLoginUser(c *gin.Context, db *gorm.DB) {
 	var creds utils.Credentials
 
 	if err := c.ShouldBindJSON(&creds); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": utils.RequestInvalid,
-		})
+		utils.HandleError(c, http.StatusBadRequest, utils.RequestInvalid)
 		return
 	}
 
 	var user models.Author
 
 	if err := db.Where("username = ?", creds.Username).First(&user).Error; err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": utils.LoginFailed,
-		})
+		utils.HandleError(c, http.StatusUnauthorized, utils.LoginFailed)
 		return
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(creds.Password)); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": utils.LoginFailed,
-		})
+		utils.HandleError(c, http.StatusUnauthorized, utils.LoginFailed)
 		return
 	}
 
@@ -110,9 +104,7 @@ func HandleLoginUser(c *gin.Context, db *gorm.DB) {
 	token_string, err := token.SignedString(utils.GetJwtKey())
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": utils.TokenGenerationFailure,
-		})
+		utils.HandleError(c, http.StatusInternalServerError, utils.TokenGenerationFailure)
 		return
 	}
 
@@ -137,11 +129,9 @@ func HandleGetUserInfo(c *gin.Context, db *gorm.DB) {
 	}
 
 	if err := db.First(&user, user_id).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": utils.Error{
-				Message: "Unable to find the user with the given ID: " + user_id,
-				Code:    "G-999",
-			},
+		utils.HandleError(c, http.StatusInternalServerError, utils.Error{
+			Message: "Unable to find the user with the given ID: " + user_id,
+			Code:    "G-999",
 		})
 		return
 	}
@@ -158,18 +148,14 @@ func HandleGetBasicUserInfo(c *gin.Context, db *gorm.DB) {
 	user_id := c.DefaultQuery("id", "")
 
 	if user_id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": utils.RequestInvalid,
-		})
+		utils.HandleError(c, http.StatusBadRequest, utils.RequestInvalid)
 		return
 	}
 
 	if err := db.First(&user, user_id).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": utils.Error{
-				Message: "Unable to find the user with the given ID: " + user_id,
-				Code:    "G-999",
-			},
+		utils.HandleError(c, http.StatusInternalServerError, utils.Error{
+			Message: "Unable to find the user with the given ID: " + user_id,
+			Code:    "G-999",
 		})
 		return
 	}
